@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <title>Teacher Login | Justify</title>
+</head>
+<body>
+<div class="container d-flex justify-content-center mt-4">
+  <h1>Justify</h1>
+</div>
+
+<div class="container">
+  <div class="row mb-4">
+    <div class="col d-flex justify-content-center">
+      <p>Log in using your <a href="https://web.mashov.info/teachers">Mashov</a> credentials:</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="user" class="form-label">Username:</label> <input type="text" placeholder="Username" class="form-control" id="user">
+      </div>
+      <div class="mb-3">
+        <label for="pass" class="form-label">Password:</label> <input type="password" placeholder="Password" class="form-control" id="pass">
+      </div>
+      <div class="mb-3">
+        <button type="button" class="btn btn-primary" id="login">Log in</button>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+</div>
+
+<div class="footer container d-flex align-items-end justify-content-center">
+  <p><small>&copy; Rotem Moses 2021. Justify is available under the MIT license.
+    <a href="/privacy">View the privacy page.</a></small></p>
+</div>
+
+<!-- Scripts go at the end -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery-3.6.0.min.js"></script>
+<script src="/js/cookies.min.js"></script>
+<script src="/js/teacher-login.js"></script>
+</body>
+</html>
