@@ -1,10 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard | Justify</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <title>Dashboard | Justify</title>
 </head>
 <body>
-<p>WIP</p>
+
+<header class="mb-4">
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Justify</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Teacher Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/privacy">Privacy</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <span class="navbar-text me-3" id="name"></span>
+          <button class="btn btn-sm btn-outline-primary me-2" type="button" id="btnLogout">Log out</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- body -->
+<div class="container">
+  <div class="mt-5">
+    <div class="row">
+      <div class="btn-group" role="group">
+        <div class="btn-group" role="group"> <!-- filter -->
+          <button id="filterBtn" type="button" class="btn btn-outline-primary dropdown-toggle"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            Filter requests
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="filterBtn">
+            <li><a class="dropdown-item" href="#" onclick="loadUnanswered()">Unanswered</a></li>
+            <li><a class="dropdown-item" href="#" onclick="loadAll()">All</a></li>
+          </ul>
+        </div>
+        <div class="btn-group" role="group"> <!-- sort -->
+          <button id="sortBtn" type="button" class="btn btn-outline-primary dropdown-toggle"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            Sort by
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="sortBtn">
+            <li><a class="dropdown-item" href="#" onclick="sortDate()">Request date</a></li>
+            <li><a class="dropdown-item" href="#" onclick="sortUser()">User</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Start date</th>
+          <th>(period)</th>
+          <th>End date</th>
+          <th>(period)</th>
+          <th>Event</th>
+          <th>Requested Approval</th>
+          <th>Note</th>
+          <th>Status</th>
+        </tr>
+        </thead>
+        <tbody id="tb">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="footer container d-flex align-items-end justify-content-center">
+  <p><small>&copy; Rotem Moses 2021. Justify is available under the MIT license.
+    <a href="/privacy">View the privacy page.</a></small></p>
+</footer>
+
+<!-- Scripts go at the end -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery-3.6.0.min.js"></script>
+<script src="/js/cookies.min.js"></script>
+<script src="/js/teacher.js"></script>
 </body>
 </html>

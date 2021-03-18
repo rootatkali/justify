@@ -35,7 +35,13 @@ public class ContentController {
   
   @GetMapping(path = "/student")
   public String getStudentPage(@CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
-    validateUser(mashovId, token, Role.STUDENT);
+    try {
+      validateUser(mashovId, token, Role.STUDENT);
+    } catch (ResponseStatusException e) { // Redirect to login page if unauthorized
+      if (e.getStatus() != HttpStatus.FORBIDDEN)
+        return "login";
+      throw e;
+    }
     return "student";
   }
   
@@ -46,7 +52,13 @@ public class ContentController {
   
   @GetMapping(path = "/teacher")
   public String getTeacherPage(@CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
-    validateUser(mashovId, token, Role.TEACHER);
+    try {
+      validateUser(mashovId, token, Role.TEACHER);
+    } catch (ResponseStatusException e) {
+      if (e.getStatus() != HttpStatus.FORBIDDEN)
+        return "teacher_login";
+      throw e;
+    }
     return "teacher";
   }
   

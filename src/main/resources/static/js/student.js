@@ -4,10 +4,11 @@ let justifications;
 $.get("/api/events", evn => {
   events = evn;
   loadEvents();
-});
-$.get("/api/justifications", jst => {
-  justifications = jst;
-  loadApprovals();
+  $.get("/api/justifications", jst => {
+    justifications = jst;
+    loadApprovals();
+    getRequests();
+  });
 });
 
 function loadRequests(requests) {
@@ -15,17 +16,20 @@ function loadRequests(requests) {
   tb.innerHTML = "";
   let event = 0;
 
-  requests.forEach(r => {
+  requests.reverse().forEach(r => {
     let color = '';
     switch (r.status) {
       case "APPROVED":
-        color = 'class="table-success"';
+        color = 'class="table-success"'; // green
         break;
       case "REJECTED":
-        color = 'class="table-danger"';
+        color = 'class="table-danger"'; // red
         break;
-      default:
-        color = '';
+      case "CANCELLED":
+        color = 'class="table-secondary"'; // gray
+        break;
+      default: // UNANSWERED
+        color = ''; // default (white/black - browser settings)
     }
     let eventCode = r.eventCode;
     let justificationCode = r.justificationCode;
@@ -53,8 +57,6 @@ function getRequests() {
 
   $.get(url, loadRequests);
 }
-
-getRequests();
 
 function loadEvents() {
   let select = document.getElementById("event");
@@ -106,3 +108,14 @@ function sendRequest() {
 document.getElementById("sendRequest").onclick = function () {
   sendRequest()
 };
+
+document.getElementById("btnLogout").onclick = function () {
+  $.get("/api/logout", () => {
+    window.location.href = "/student/login";
+  });
+}
+
+let mashovId = Cookies.get("mashovId");
+$.get(`/api/users/${mashovId}`, data => {
+  $("#name").text(data.firstName + " " + data.lastName);
+});

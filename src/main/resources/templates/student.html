@@ -7,25 +7,48 @@
   <title>Students | Justify</title>
 </head>
 <body>
-<div class="container d-flex justify-content-center mt-4">
-  <h1>Justify</h1>
-</div>
+<header class="mb-4">
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Justify</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Student Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/privacy">Privacy</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <span class="navbar-text me-3" id="name"></span>
+          <button class="btn btn-sm btn-outline-primary me-2" type="button" id="btnLogout">Log out</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</header>
 
+<!-- body -->
 <div class="container">
-  <h2 class="mb-2 d-flex justify-content-center">My requests</h2>
   <div class="d-grid gap-2 col-4 mx-auto">
     <button type="button" class="btn btn-primary" id="openModal"
-            data-bs-target="#modal" data-bs-toggle="modal">New request</button>
+            data-bs-target="#modal" data-bs-toggle="modal">New request
+    </button>
   </div>
   <div class="table-responsive">
     <table class="table table-sm">
       <thead>
       <tr>
-        <th>ID</th>
+        <th>#</th>
         <th>Start date</th>
-        <th>Start period</th>
+        <th>(period)</th>
         <th>End date</th>
-        <th>End period</th>
+        <th>(period)</th>
         <th>Event</th>
         <th>Requested Approval</th>
         <th>Note</th>
@@ -38,11 +61,12 @@
   </div>
 </div>
 
-<div class="footer container d-flex align-items-end justify-content-center">
+<footer class="footer container d-flex align-items-end justify-content-center">
   <p><small>&copy; Rotem Moses 2021. Justify is available under the MIT license.
     <a href="/privacy">View the privacy page.</a></small></p>
-</div>
+</footer>
 
+<!-- New request modal -->
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

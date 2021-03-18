@@ -12,7 +12,7 @@ function onClickLogin() {
       window.location.href = "/student";
     },
     error: function (jqXhr, textStatus, errorMessage) {
-      alert('error!');
+      alert("Invalid login. Please try again.");
       // TODO error processing logic
     }
   });

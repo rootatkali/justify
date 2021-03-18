@@ -3,18 +3,20 @@ package me.rootatkali.justify;
 import de.faceco.mashovapi.API;
 import de.faceco.mashovapi.components.LoginInfo;
 import de.faceco.mashovapi.components.LoginResponse;
+import de.faceco.mashovapi.components.School;
 import me.rootatkali.justify.model.*;
 import me.rootatkali.justify.repo.EventRepository;
 import me.rootatkali.justify.repo.JustificationRepository;
 import me.rootatkali.justify.repo.RequestRepository;
 import me.rootatkali.justify.repo.UserRepository;
-import me.rootatkali.justify.teacher.TeacherApi;
+import me.rootatkali.justify.teacher.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,9 +49,10 @@ public class ApiController {
     if (lr instanceof LoginInfo) { // Login success
       LoginInfo li = (LoginInfo) lr;
       
-      if (!userRepository.existsById(li.getCredential().getUserId())) { // create new user
+      String id = String.valueOf(li.getCredential().getIdNumber());
+      if (!userRepository.existsById(id)) { // create new user
         User user = new User();
-        user.setMashovId(li.getCredential().getUserId());
+        user.setMashovId(id);
         user.setFirstName(li.getAccessToken().getChildren()[0].getPrivateName());
         user.setLastName(li.getAccessToken().getChildren()[0].getFamilyName());
         user.setRole(Role.STUDENT);
@@ -60,7 +63,7 @@ public class ApiController {
         return user;
         
       } else { // find user from sql
-        User user = userRepository.findById(li.getCredential().getUserId()).orElseThrow(
+        User user = userRepository.findById(id).orElseThrow(
             () -> { // should never reach here
               try {
                 api.logout();
@@ -84,23 +87,28 @@ public class ApiController {
   }
   
   @PostMapping(path = "/teacherLogin")
-  public User teacherLogin(@RequestParam String username, @RequestParam String password) {
+  public UserResponse teacherLogin(@RequestParam String username, @RequestParam String password) throws IOException {
     TeacherApi tApi = TeacherApi.getInstance();
-    
+    School kfar = tApi.fetchSchool();
     String mashovId = "";
+    User user;
+    UserResponse ur;
     
-    // TODO insert teacher login code
-    
-    if (username.equals("test") && password.equals("test")) { // TODO remove after logic
+    if (username.equals("test") && password.equals("test")) {
       mashovId = "teacher_test";
+      user = userRepository.findById(mashovId).orElseThrow(
+          () -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+      );
+      ur = new UserResponse(user, null, null);
+      
+    } else {
+      TeacherLogin l = new TeacherLogin(kfar, username, password);
+      ur = tApi.login(l);
+      user = ur.getUser();
+      mashovId = user.getMashovId();
     }
     
-    User user;
-    if (!userRepository.existsById(mashovId)) {
-      user = new User();
-      // TODO set user params
-      user.setRole(Role.TEACHER);
-    } else {
+    if (userRepository.existsById(mashovId)) {
       user = userRepository.findById(mashovId).orElseThrow(() -> // shouldn't reach here
           new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
       if (user.getRole() != Role.TEACHER)
@@ -109,12 +117,23 @@ public class ApiController {
     }
     user.setToken();
     user.setTokenExpires();
-    return userRepository.save(user);
+    userRepository.save(user);
+    ur.setUser(user);
+    return ur;
   }
   
   @GetMapping(path = "/logout")
-  public void logout(@CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
+  public void logout(@CookieValue(name = "mashovId") String mashovId,
+                     @CookieValue(name = "token") UUID token,
+                     @CookieValue(name = "teacherCsrf", required = false) String csrf,
+                     @CookieValue(name = "teacherCookies", required = false) String cookies)
+      throws IOException {
+    validateUser(mashovId, token, null);
     User u = userRepository.findById(mashovId).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+    if (u.getRole() == Role.TEACHER && csrf != null && !csrf.equals("null")) {
+      if (TeacherApi.getInstance().logout(csrf, CookieUtil.convert(cookies)) != 200)
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     u.clearToken();
     userRepository.save(u);
   }
@@ -127,7 +146,8 @@ public class ApiController {
         () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED)
     );
     
-    if (user.getRole() != role) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    // role == null => no role/permission check
+    if (role != null && user.getRole() != role) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     if (!User.validateToken(user, mashovId, token)) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
         "Token expired, please log out.");
   }
@@ -136,7 +156,7 @@ public class ApiController {
   @ResponseBody
   public User getUser(@PathVariable String id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
     if (!id.equals(mashovId)) validateUser(mashovId, token, Role.TEACHER);
-    else validateUser(mashovId, token, Role.STUDENT); // Find information about me
+    else validateUser(mashovId, token, null); // Find information about me
     return userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
   }
   
@@ -221,14 +241,46 @@ public class ApiController {
     return r;
   }
   
+  @GetMapping(path = "/requests/{id}/cancel")
+  public Request cancelRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
+    validateUser(mashovId, token, Role.STUDENT);
+    
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
+    if (!r.getMashovId().equals(mashovId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    r.setRequestId(id);
+    r.setStatus(RequestStatus.CANCELLED);
+    return requestRepository.save(r);
+  }
+  
   @GetMapping(path = "/requests/{id}/approve")
-  public Request approveRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
+  public Request approveRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token,
+                                @CookieValue(name = "teacherCsrf") String csrf,
+                                @CookieValue(name = "teacherCookies") String cookies) throws IOException {
     validateUser(mashovId, token, Role.TEACHER);
     
-    Request r = requestRepository.findById(id).orElseThrow();
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
     r.setRequestId(id);
     r.setStatus(RequestStatus.APPROVED);
-    // TODO insert mashov approval logic
+    Approval apr = new Approval(
+        r.getEventCode(),
+        r.getDateEnd().toString() + "T02:00:00",
+        15,
+        6,
+        r.getPeriodEnd(),
+        r.getJustificationCode(),
+        Integer.parseInt(mashovId),
+        r.getDateStart().toString() + "T02:00:00",
+        0,
+        0,
+        r.getPeriodStart(),
+        LocalDateTime.now().toString(),
+        Integer.parseInt(r.getMashovId())
+    );
+    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies));
     return requestRepository.save(r);
   }
   
@@ -236,7 +288,9 @@ public class ApiController {
   public Request rejectRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
     validateUser(mashovId, token, Role.TEACHER);
     
-    Request r = requestRepository.findById(id).orElseThrow();
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
     r.setRequestId(id);
     r.setStatus(RequestStatus.REJECTED);
     return requestRepository.save(r);

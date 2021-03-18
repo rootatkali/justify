@@ -20,6 +20,10 @@ repositories {
 
 dependencies {
   implementation 'de.faceco:mashovapi:1.1.0b5'
+  implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+  implementation 'com.google.code.gson:gson:2.8.6'
+  implementation 'com.jayway.jsonpath:json-path:2.5.0'
+
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
   implementation 'org.springframework.boot:spring-boot-starter-web'
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

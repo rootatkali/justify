@@ -8,11 +8,13 @@ function onClickLogin() {
       password: password
     },
     success: function (data, status, xhr) {
-      Cookies.set('mashovId', data.mashovId).set('token', data.token);
+      Cookies.set('mashovId', data.user.mashovId).set('token', data.user.token);
+      Cookies.set('teacherCsrf', data.csrfToken);
+      Cookies.set('teacherCookies', data.cookies);
       window.location.href = "/teacher";
     },
     error: function (jqXhr, textStatus, errorMessage) {
-      alert('error!');
+      alert("Invalid login. Please try again.");
     }
   });
 }

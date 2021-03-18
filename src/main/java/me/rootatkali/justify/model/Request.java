@@ -87,7 +87,12 @@ public class Request {
   }
   
   public void setNote(String note) {
-    this.note = note;
+    this.note = note.replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#x27;");
+    // XSS prevention
   }
   
   public RequestStatus getStatus() {

@@ -69,9 +69,13 @@ public class User {
   public static boolean validateToken(User user,String mashovId, UUID token) {
     if (user.token == null || user.tokenExpires == null) return false;
     
+    boolean tokenValid = LocalTime.now().isBefore(LocalTime.of(22, 30)) ?
+        user.tokenExpires.toLocalTime().isAfter(LocalTime.now()) :
+        LocalTime.now().plusMinutes(90).isAfter(user.tokenExpires.toLocalTime());
+    
     return user.mashovId.equals(mashovId) &&
         user.token.equals(token) &&
-        user.tokenExpires.toLocalTime().isAfter(LocalTime.now());
+        tokenValid;
   }
   
   public void clearToken() {
