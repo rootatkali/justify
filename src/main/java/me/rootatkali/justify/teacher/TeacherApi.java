@@ -99,19 +99,7 @@ public class TeacherApi {
   }
   
   private String cookieHeader(HashMap<String, String> cookies) {
-    StringBuilder sb = new StringBuilder();
-    
-    for (Map.Entry<String, String> e : cookies.entrySet()) { // Loop for cookies from login
-      sb.append(
-          String.format("%s=%s; ", e.getKey(), e.getValue())
-      );
-    }
-    String cookieHeader = sb.toString().trim();
-    
-    if (cookieHeader.length() > 0 && cookieHeader.lastIndexOf(";") == cookieHeader.length() - 1) {
-      cookieHeader = cookieHeader.substring(0, cookieHeader.length() - 1);
-    }
-    return cookieHeader;
+    return CookieUtil.convert(cookies);
   }
   
   public ApprovalResponse requestApproval(Approval apr, String csrf, HashMap<String, String> cookies) throws IOException {

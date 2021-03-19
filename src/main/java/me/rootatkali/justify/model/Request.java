@@ -1,5 +1,7 @@
 package me.rootatkali.justify.model;
 
+import me.rootatkali.justify.Xss;
+
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -31,7 +33,7 @@ public class Request {
   }
   
   public void setMashovId(String mashovId) {
-    this.mashovId = mashovId;
+    this.mashovId = Xss.deXss(mashovId);
   }
   
   public Date getDateStart() {
@@ -87,11 +89,7 @@ public class Request {
   }
   
   public void setNote(String note) {
-    this.note = note.replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("\"", "&quot;")
-        .replaceAll("'", "&#x27;");
+    this.note = Xss.deXss(note);
     // XSS prevention
   }
   

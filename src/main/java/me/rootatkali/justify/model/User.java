@@ -1,5 +1,7 @@
 package me.rootatkali.justify.model;
 
+import me.rootatkali.justify.Xss;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.sql.Time;
@@ -31,7 +33,7 @@ public class User {
   }
   
   public void setFirstName(String firstName) {
-    this.firstName = firstName;
+    this.firstName = Xss.deXss(firstName);
   }
   
   public String getLastName() {
@@ -39,7 +41,7 @@ public class User {
   }
   
   public void setLastName(String lastName) {
-    this.lastName = lastName;
+    this.lastName = Xss.deXss(lastName);
   }
   
   public Role getRole() {
