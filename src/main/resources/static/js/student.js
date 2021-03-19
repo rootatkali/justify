@@ -78,6 +78,9 @@ function sendRequest() {
   let mashovId = Cookies.get("mashovId");
   let dateStart = $('#date-start').val();
   let dateEnd = $('#date-end').val();
+  if (dateEnd == null || dateEnd === '') {
+    dateEnd = dateStart;
+  }
   let periodStart = parseInt($('#period-start').val());
   let periodEnd = parseInt($('#period-end').val());
   let eventCode = parseInt($('#event').val());
