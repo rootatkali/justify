@@ -36,7 +36,7 @@ function loadRequests(requests) {
     let eventName = events.filter(e => e.code === eventCode)[0].name;
     let jstfnName = justifications.filter(j => j.code === justificationCode)[0].name;
     let cancel = r.status === "UNANSWERED" ?
-      ` <a href="#" onclick="cancelRequest(${r.requestId})"><i class="far fa-times-circle" style="color: black"></i></a>`
+      ` <a href="#" onclick="cancelRequest(${r.requestId})"><i class="far fa-trash-alt" style="color: red"></i></a>`
       : "";
     let tr = `<tr ${color}>
 <td>${r.requestId}</td>
