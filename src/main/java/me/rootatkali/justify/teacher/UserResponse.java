@@ -12,4 +12,5 @@ public class UserResponse {
   private User user;
   private String cookies;
   private String csrfToken;
+  private String uniquId;
 }

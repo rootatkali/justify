@@ -58,22 +58,23 @@ public class TeacherApi {
     return school;
   }
   
-  public UserResponse login(TeacherLogin l) throws IOException {
+  public UserResponse login(TeacherLogin l, String uniquId) throws IOException {
     MediaType json = MediaType.parse("application/json");
     RequestBody body = RequestBody.create(json, gson.toJson(l));
     
-    Request req = new Request.Builder()
+    Request.Builder builder = new Request.Builder()
         .url(BASE_URL + "/login")
         .method("POST", body)
         .addHeader("User-Agent", USER_AGENT)
-        .addHeader("Content-Type", "application/json")
-        .build();
+        .addHeader("Content-Type", "application/json");
+    if (uniquId != null) {
+      builder.addHeader("Cookie", "uniquId=" + uniquId);
+    }
+    Request req = builder.build();
     
     Response res = http.newCall(req).execute();
     if (!res.isSuccessful()) throw new ResponseStatusException(HttpStatus.valueOf(res.code()));
     
-//    LoginInfo li = gson.fromJson(res.body().string(), LoginInfo.class);
-  
     HashMap<String, String> cookies = new HashMap<>();
     
     Headers headers = res.headers();
@@ -95,7 +96,8 @@ public class TeacherApi {
     u.setFirstName(names[1]);
     u.setLastName(names[0]);
     u.setRole(Role.TEACHER);
-    return new UserResponse(u, CookieUtil.convert(cookies), csrfToken);
+    String uniqRet = cookies.getOrDefault("uniquId", null);
+    return new UserResponse(u, CookieUtil.convert(cookies), csrfToken, uniqRet);
   }
   
   private String cookieHeader(HashMap<String, String> cookies) {

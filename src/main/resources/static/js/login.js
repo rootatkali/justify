@@ -8,7 +8,6 @@ function onClickLogin() {
       password: password
     },
     success: function (data, status, xhr) {
-      Cookies.set('mashovId', data.mashovId).set('token', data.token);
       window.location.href = "/student";
     },
     error: function (jqXhr, textStatus, errorMessage) {
