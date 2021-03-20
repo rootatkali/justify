@@ -101,7 +101,7 @@ public class ApiController {
         }
         user.setToken();
         user.setTokenExpires();
-  
+        
         Cookie uid = new Cookie("mashovId", id);
         Cookie token = new Cookie("token", user.getToken().toString());
         token.setHttpOnly(true);
@@ -163,7 +163,7 @@ public class ApiController {
     
     user.setToken();
     user.setTokenExpires();
-  
+    
     Cookie uid = new Cookie("mashovId", mashovId);
     Cookie token = new Cookie("token", user.getToken().toString());
     token.setHttpOnly(true);
@@ -320,6 +320,7 @@ public class ApiController {
     Request r = requestRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
     );
+    if (r.getStatus() != RequestStatus.UNANSWERED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     r.setRequestId(id);
     r.setStatus(RequestStatus.APPROVED);
     Approval apr = new Approval(
@@ -341,6 +342,37 @@ public class ApiController {
     return requestRepository.save(r);
   }
   
+  @GetMapping(path = "/requests/{id}/undo")
+  public Request undoApproval(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token,
+                              @CookieValue(name = "teacherCsrf") String csrf,
+                              @CookieValue(name = "teacherCookies") String cookies) throws IOException {
+    validateUser(mashovId, token, Role.TEACHER);
+    
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
+    if (r.getStatus() != RequestStatus.APPROVED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    r.setRequestId(id);
+    r.setStatus(RequestStatus.REJECTED);
+    Approval apr = new Approval(
+        r.getEventCode(),
+        r.getDateEnd().toString() + "T02:00:00",
+        15,
+        6,
+        r.getPeriodEnd(),
+        -1,
+        Integer.parseInt(mashovId),
+        r.getDateStart().toString() + "T02:00:00",
+        0,
+        0,
+        r.getPeriodStart(),
+        LocalDateTime.now().toString(),
+        Integer.parseInt(r.getMashovId())
+    );
+    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies));
+    return requestRepository.save(r);
+  }
+  
   @GetMapping(path = "/requests/{id}/reject")
   public Request rejectRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
     validateUser(mashovId, token, Role.TEACHER);
@@ -348,6 +380,7 @@ public class ApiController {
     Request r = requestRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
     );
+    if (r.getStatus() != RequestStatus.UNANSWERED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     r.setRequestId(id);
     r.setStatus(RequestStatus.REJECTED);
     return requestRepository.save(r);
