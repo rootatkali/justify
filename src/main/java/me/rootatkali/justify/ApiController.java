@@ -15,8 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,15 +42,25 @@ public class ApiController {
   
   @PostMapping(path = "/login")
   @ResponseBody
-  public User login(@RequestParam String username, @RequestParam String password) throws IOException {
+  public User login(@RequestParam String username, @RequestParam String password,
+                    @CookieValue(name = "uniquId", required = false) String uniquId,
+                    HttpServletResponse response) throws IOException {
     API api = API.getInstance();
     if (api.getSchool() == null) {
       api.fetchSchool(580019);
     }
+    api.setDeviceId(uniquId);
     LoginResponse lr = api.login(2021, username, password);
     
     if (lr instanceof LoginInfo) { // Login success
       LoginInfo li = (LoginInfo) lr;
+      
+      Cookie c = new Cookie("uniquId", api.getDeviceId());
+      c.setSecure(true);
+      c.setPath("/");
+      c.setMaxAge(Integer.MAX_VALUE);
+      c.setHttpOnly(true);
+      response.addCookie(c);
       
       String id = String.valueOf(li.getCredential().getIdNumber());
       if (!userRepository.existsById(id)) { // create new user
@@ -87,7 +100,9 @@ public class ApiController {
   }
   
   @PostMapping(path = "/teacherLogin")
-  public UserResponse teacherLogin(@RequestParam String username, @RequestParam String password) throws IOException {
+  public User teacherLogin(@RequestParam String username, @RequestParam String password,
+                           @CookieValue(name = "uniquId", required = false) String uniquId,
+                           HttpServletResponse response) throws IOException {
     TeacherApi tApi = TeacherApi.getInstance();
     School kfar = tApi.fetchSchool();
     String mashovId = "";
@@ -99,11 +114,11 @@ public class ApiController {
       user = userRepository.findById(mashovId).orElseThrow(
           () -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
       );
-      ur = new UserResponse(user, null, null);
+      ur = new UserResponse(user, null, null, null);
       
     } else {
       TeacherLogin l = new TeacherLogin(kfar, username, password);
-      ur = tApi.login(l);
+      ur = tApi.login(l, uniquId);
       user = ur.getUser();
       mashovId = user.getMashovId();
     }
@@ -115,11 +130,23 @@ public class ApiController {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Students cannot log in as teachers.");
       user.clearToken();
     }
+    
+    Cookie mashovCookies = new Cookie("teacherCookies", ur.getCookies());
+    Cookie teacherCsrf = new Cookie("teacherCsrf", ur.getCsrfToken());
+    Cookie uniqC = new Cookie("uniquId", uniquId != null ? uniquId : ur.getUniquId());
+    uniqC.setMaxAge(Integer.MAX_VALUE);
+    Arrays.asList(mashovCookies, teacherCsrf, uniqC).forEach(c -> {
+      c.setPath("/");
+      c.setHttpOnly(true);
+      c.setSecure(true);
+      response.addCookie(c);
+    });
+    
     user.setToken();
     user.setTokenExpires();
     userRepository.save(user);
     ur.setUser(user);
-    return ur;
+    return ur.getUser();
   }
   
   @GetMapping(path = "/logout")
