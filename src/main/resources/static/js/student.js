@@ -35,9 +35,11 @@ function loadRequests(requests) {
     let justificationCode = r.justificationCode;
     let eventName = events.filter(e => e.code === eventCode)[0].name;
     let jstfnName = justifications.filter(j => j.code === justificationCode)[0].name;
-
+    let cancel = r.status === "UNANSWERED" ? `<a href="#" onclick="cancelRequest(${r.requestId})">
+<i class="far fa-times-circle"></i>
+</a> ` : "";
     let tr = `<tr ${color}>
-<td>${r.requestId}</td>
+<td>${cancel}${r.requestId}</td>
 <td>${r.dateStart}</td>
 <td>${r.periodStart}</td>
 <td>${r.dateEnd}</td>
@@ -56,6 +58,12 @@ function getRequests() {
   let url = `/api/users/${mashovId}/requests`;
 
   $.get(url, loadRequests);
+}
+
+function cancelRequest(id) {
+  $.get(`/api/requests/${id}/cancel`, data => {
+    window.location.reload();
+  })
 }
 
 function loadEvents() {
