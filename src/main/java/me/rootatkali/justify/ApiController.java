@@ -305,6 +305,7 @@ public class ApiController {
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
     );
     if (!r.getMashovId().equals(mashovId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    if (r.getStatus() != RequestStatus.UNANSWERED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     r.setRequestId(id);
     r.setStatus(RequestStatus.CANCELLED);
     return requestRepository.save(r);
