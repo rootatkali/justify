@@ -104,6 +104,7 @@ public class ApiController {
   
         Cookie uid = new Cookie("mashovId", id);
         Cookie token = new Cookie("token", user.getToken().toString());
+        token.setHttpOnly(true);
         Arrays.asList(uid, token).forEach(ck -> {
           ck.setSecure(true);
           ck.setPath("/");
@@ -165,6 +166,7 @@ public class ApiController {
   
     Cookie uid = new Cookie("mashovId", mashovId);
     Cookie token = new Cookie("token", user.getToken().toString());
+    token.setHttpOnly(true);
     Arrays.asList(uid, token).forEach(ck -> {
       ck.setSecure(true);
       ck.setPath("/");
