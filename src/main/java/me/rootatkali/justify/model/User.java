@@ -33,7 +33,7 @@ public class User {
   }
   
   public void setFirstName(String firstName) {
-    this.firstName = Xss.deXss(firstName);
+    this.firstName = firstName;
   }
   
   public String getLastName() {
@@ -41,7 +41,7 @@ public class User {
   }
   
   public void setLastName(String lastName) {
-    this.lastName = Xss.deXss(lastName);
+    this.lastName = lastName;
   }
   
   public Role getRole() {
