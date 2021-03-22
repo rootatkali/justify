@@ -68,9 +68,13 @@ function display() {
       switch (r.status) {
         case "APPROVED":
           color = 'class="table-success"'; // green
+          status = status +
+            ` (<a href="#" onclick="undo(${id})"><i class="fal fa-trash-undo" style="color: red"></i></a>)`;
           break;
         case "REJECTED":
           color = 'class="table-danger"'; // red
+          status = status +
+            ` (<a href="#" onclick="unlock(${id})"><i class="fal fa-trash-restore" style="color: black"></i></a>)`;
           break;
         case "CANCELLED":
           color = 'class="table-secondary"'; // gray
@@ -124,4 +128,16 @@ function sortDate() {
     return a.requestId - b.requestId;
   }).reverse();
   display();
+}
+
+function unlock(id) {
+  $.get(`/api/requests/${id}/unlock`, data => {
+    window.location.reload();
+  });
+}
+
+function undo(id) {
+  $.get(`/api/requests/${id}/undo`, data => {
+    window.location.reload();
+  })
 }
