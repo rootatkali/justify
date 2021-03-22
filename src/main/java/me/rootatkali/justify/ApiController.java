@@ -360,7 +360,7 @@ public class ApiController {
         15,
         6,
         r.getPeriodEnd(),
-        -1,
+        -1, // rejected
         Integer.parseInt(mashovId),
         r.getDateStart().toString() + "T02:00:00",
         0,
@@ -383,6 +383,56 @@ public class ApiController {
     if (r.getStatus() != RequestStatus.UNANSWERED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     r.setRequestId(id);
     r.setStatus(RequestStatus.REJECTED);
+    return requestRepository.save(r);
+  }
+  
+  /**
+   * Unlock a rejected request for approval.
+   *
+   * @param id       The request ID to be unlocked
+   * @param mashovId the teacher's ID
+   * @param token    the teacher's authentication token
+   * @return The request in its unlocked form
+   */
+  @GetMapping(path = "/requests/{id}/unlock")
+  public Request unlockRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token) {
+    validateUser(mashovId, token, Role.TEACHER);
+    
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
+    
+    if (r.getStatus() != RequestStatus.REJECTED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    
+    r.setRequestId(id);
+    r.setStatus(RequestStatus.UNANSWERED);
+    return requestRepository.save(r);
+  }
+  
+  @PutMapping(path = "/requests/{id}")
+  public Request updateRequest(@PathVariable Integer id, @CookieValue(name = "mashovId") String mashovId, @CookieValue(name = "token") UUID token,
+                               @RequestBody RequestTemplate template) {
+    validateUser(mashovId, token, Role.STUDENT);
+    Request r = requestRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found.")
+    );
+    if (!r.getMashovId().equals(mashovId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    if (!r.getMashovId().equals(template.getMashovId()))
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    
+    // allow editing only unanswered requests
+    if (r.getStatus() != RequestStatus.UNANSWERED) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    
+    r.setRequestId(id);
+    // update all non-null elements
+    if (template.getDateStart() != null) r.setDateStart(template.getDateStart());
+    if (template.getDateEnd() != null) r.setDateEnd(template.getDateEnd());
+    if (template.getPeriodStart() != null) r.setPeriodStart(template.getPeriodStart());
+    if (template.getPeriodEnd() != null) r.setPeriodEnd(template.getPeriodEnd());
+    if (template.getEventCode() != null) r.setEventCode(template.getEventCode());
+    if (template.getJustificationCode() != null) r.setJustificationCode(template.getJustificationCode());
+    if (template.getNote() != null) r.setNote(template.getNote());
+    
     return requestRepository.save(r);
   }
   

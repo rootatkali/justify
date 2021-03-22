@@ -9,7 +9,7 @@ public class RequestTemplate {
   private Integer periodStart;
   private Integer periodEnd;
   private Integer eventCode;
-  private Integer JustificationCode;
+  private Integer justificationCode;
   private String note;
   
   public String getMashovId() {
@@ -61,11 +61,11 @@ public class RequestTemplate {
   }
   
   public Integer getJustificationCode() {
-    return JustificationCode;
+    return justificationCode;
   }
   
   public void setJustificationCode(Integer justificationCode) {
-    JustificationCode = justificationCode;
+    this.justificationCode = justificationCode;
   }
   
   public String getNote() {
