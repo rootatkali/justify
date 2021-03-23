@@ -38,11 +38,11 @@ function loadRequests(requests) {
     let status = r.status === "UNANSWERED" ?
       `
 <div class="btn-group btn-group-sm" role="group" aria-label="Action buttons for request">
-  <button type="button" class="btn btn-danger" onclick="cancelRequest(${r.requestId})">
-    <i class="fal fa-trash-alt" style="color: #fff"></i>
-  </button>
   <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editModal" data-bs-id="${r.requestId}">
     <i class="fal fa-edit" style="color: #fff"></i>
+  </button>
+  <button type="button" class="btn btn-danger" onclick="cancelRequest(${r.requestId})">
+    <i class="fal fa-trash-alt" style="color: #fff"></i>
   </button>
 </div>
 `

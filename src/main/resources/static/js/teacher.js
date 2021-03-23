@@ -60,9 +60,14 @@ function display() {
     let status = r.status;
     let color = "";
     if (r.status === "UNANSWERED") {
-      status = `<div class="btn-group btn-group-sm" role="group" aria-label="Approve/reject buttons">
-<button class="btn btn-success" onclick="approveRequest(${id})">Approve</button>
-<button class="btn btn-danger" onclick="rejectRequest(${id})">Reject</button>
+      status = `
+<div class="btn-group btn-group-sm" role="group" aria-label="Approve/reject buttons">
+  <button class="btn btn-success" onclick="approveRequest(${id})" aria-label="Approve">
+    <i class="fal fa-check-square" style="color:#fff;"></i>
+  </button>
+  <button class="btn btn-danger" onclick="rejectRequest(${id})" aria-label="Reject">
+    <i class="fal fa-times-square" style="color:#fff;"></i>
+  </button>
 </div>`
     } else {
       switch (r.status) {
