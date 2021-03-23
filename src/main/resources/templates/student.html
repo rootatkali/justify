@@ -150,6 +150,89 @@
   </div>
 </div>
 
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalTitle">Editing Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><small>For an entire day, select periods 0-15.</small></p>
+        <form>
+          <div class="mb-3">
+            <label for="date-start" class="col-form-label">Start date:</label>
+            <input type="date" class="form-control" id="edit-date-start">
+          </div>
+          <div class="mb-3">
+            <label for="period-start" class="col-form-label">Start period:</label>
+            <select class="form-select" id="edit-period-start">
+              <option selected value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="date-end" class="col-form-label">End date:</label>
+            <input type="date" class="form-control" id="edit-date-end">
+          </div>
+          <div class="mb-3">
+            <label for="period-end" class="col-form-label">End period:</label>
+            <select class="form-select" id="edit-period-end">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option selected value="15">15</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="event" class="col-form-label">Event:</label>
+            <select class="form-select" id="edit-event"></select>
+          </div>
+          <div class="mb-3">
+            <label for="approval" class="col-form-label">Requested approval:</label>
+            <select class="form-select" id="edit-approval"></select>
+          </div>
+          <div class="mb-3">
+            <label for="note" class="col-form-label">Note:</label>
+            <input type="text" class="form-control" id="edit-note" placeholder="Note">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="edit-sendRequest">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Scripts go at the end -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/jquery-3.6.0.min.js"></script>
