@@ -18,7 +18,7 @@ $.get("/api/events", evn => {
   $.get("/api/justifications", jst => {
     justifications = jst;
 
-    let jstSel = document.getElementById("approval");
+    let jstSel = document.getElementById("edit-approval");
     jstSel.innerHTML = "";
     justifications.forEach(j => {
       jstSel.innerHTML += `<option value="${j.code}">${j.name}</option>`;
