@@ -67,17 +67,14 @@ public class ContentController {
   }
   
   @GetMapping(path = "/admin/requests")
-  public String getAdminRequests(@CookieValue(name = "admin") String token) {
-    System.out.println(token);
-    System.out.println(admin.findAll());
-    System.out.println(admin.existsById(token));
-    if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+  public String getAdminRequests(@CookieValue(name = "admin", required = false) String token) {
+    if (token == null || !admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     return "admin_requests";
   }
   
   @GetMapping(path = "/admin/users")
-  public String getAdminUsers(@CookieValue(name = "admin") String token) {
-    if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+  public String getAdminUsers(@CookieValue(name = "admin", required = false) String token) {
+    if (token == null || !admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     return "admin_users";
   }
   
