@@ -50,7 +50,7 @@ function display() {
     let actions = `
     <div class="btn-group btn-group-sm" role="group" aria-label="Action buttons">
       <button type="button" class="btn btn-success" onclick="approve(${id})"><i class="fal fa-check-square" style="color:#fff;"></i></button>
-      <button type="button" class="btn btn-danger" onclick="reject(${id})"><i class="fal fa-check-times" style="color:#fff;"></i></button>
+      <button type="button" class="btn btn-danger" onclick="reject(${id})"><i class="fal fa-times-square" style="color:#fff;"></i></button>
       <button type="button" class="btn btn-secondary" onclick="cancel(${id})"><i class="fal fa-ban" style="color:#fff;"></i></button>
       <button type="button" class="btn btn-primary" onclick="reset(${id})"><i class="fal fa-undo" style="color:#fff;"></i></button>
       <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editModal" data-bs-id="${id}">
