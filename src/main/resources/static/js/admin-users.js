@@ -11,7 +11,7 @@ $.get("/api/admin/users", data => {
     let last = u.lastName;
     let role = u.role;
     let action = `
-<button class="btn btn-sm btn-info" type="button" data-bs-toggle="modal" data-bs-target="modal" data-bs-id="${id}">
+<button class="btn btn-sm btn-info" type="button" data-bs-toggle="modal" data-bs-target="editModal" data-bs-id="${id}">
   <i class="fal fa-edit" style="color: #fff"></i>
 </button>
 `;
@@ -20,7 +20,7 @@ $.get("/api/admin/users", data => {
 });
 
 
-const modal = document.getElementById("modal");
+const modal = document.getElementById('editModal');
 modal.addEventListener("show.bs.modal", event => {
   let btn = event.relatedTarget;
   let id = btn.getAttribute('data-bs-id');
