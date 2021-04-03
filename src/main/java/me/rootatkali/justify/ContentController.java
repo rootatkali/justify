@@ -68,6 +68,8 @@ public class ContentController {
   
   @GetMapping(path = "/admin/requests")
   public String getAdminRequests(@CookieValue(name = "admin") UUID token) {
+    System.out.println(token);
+    System.out.println(admin.findAll());
     if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     return "admin_requests";
   }
