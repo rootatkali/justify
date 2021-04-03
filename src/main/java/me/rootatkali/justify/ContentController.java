@@ -67,7 +67,7 @@ public class ContentController {
   }
   
   @GetMapping(path = "/admin/requests")
-  public String getAdminRequests(@CookieValue(name = "admin") UUID token) {
+  public String getAdminRequests(@CookieValue(name = "admin") String token) {
     System.out.println(token);
     System.out.println(admin.findAll());
     System.out.println(admin.existsById(token));
@@ -76,7 +76,7 @@ public class ContentController {
   }
   
   @GetMapping(path = "/admin/users")
-  public String getAdminUsers(@CookieValue(name = "admin") UUID token) {
+  public String getAdminUsers(@CookieValue(name = "admin") String token) {
     if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     return "admin_users";
   }
