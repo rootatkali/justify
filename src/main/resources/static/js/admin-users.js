@@ -19,16 +19,6 @@ $.get("/api/admin/users", data => {
   });
 });
 
-function submitName(id, first, last) {
-  $.ajax(`/api/admin/users/${id}/name`, {
-    method: "POST",
-    data: {
-      first: first,
-      last: last
-    },
-    success: data => location.reload()
-  });
-}
 
 const modal = document.getElementById("modal");
 modal.addEventListener("show.bs.modal", event => {

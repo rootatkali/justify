@@ -8,8 +8,22 @@ let users;
 
 $.get("/api/events", evn => {
   events = evn;
+
+  let evnSel = document.getElementById("edit-event");
+  evnSel.innerHTML = "";
+  events.forEach(e => {
+    evnSel.innerHTML += `<option value="${e.code}">${e.name}</option>`;
+  });
+
   $.get("/api/justifications", jst => {
     justifications = jst;
+
+    let jstSel = document.getElementById("approval");
+    jstSel.innerHTML = "";
+    justifications.forEach(j => {
+      jstSel.innerHTML += `<option value="${j.code}">${j.name}</option>`;
+    });
+
     $.get("/api/admin/users", usr => {
       users = usr;
       $.get("/api/admin/requests", requests => {
@@ -124,6 +138,20 @@ function sortId() {
   current = current.sort((a, b) => {
     return a.requestId - b.requestId;
   }).reverse();
+  display();
+}
+
+function sortEvent() {
+  current = current.sort((a, b) => {
+    return a.eventCode - b.eventCode
+  });
+  display();
+}
+
+function sortStatus() {
+  current = current.sort((a, b) => {
+    return a.status.localeCompare(b.status);
+  })
   display();
 }
 
