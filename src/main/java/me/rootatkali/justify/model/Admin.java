@@ -7,13 +7,29 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor
 public class Admin {
   @Id
-  private UUID token;
+  private String  token;
   private String representation;
+  
+  public Admin() {
+  }
+  
+  public String getToken() {
+    return token;
+  }
+  
+  public void setToken(String token) {
+    this.token = token;
+  }
+  
+  public String getRepresentation() {
+    return representation;
+  }
+  
+  public void setRepresentation(String representation) {
+    this.representation = representation;
+  }
 }

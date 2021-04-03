@@ -34,8 +34,8 @@ public class JustifyApplication {
   private void initSql() throws IOException {
     if (adminRepository.count() < 1) {
       Admin admin = new Admin();
-      admin.setToken(UUID.randomUUID());
-      admin.setRepresentation(admin.getToken().toString());
+      admin.setToken(UUID.randomUUID().toString());
+      admin.setRepresentation(admin.getToken());
       adminRepository.save(admin);
     }
     
