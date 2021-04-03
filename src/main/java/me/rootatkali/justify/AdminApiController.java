@@ -140,9 +140,4 @@ public class AdminApiController {
     u.setLastName(Xss.deXss(last));
     return userRepo.save(u);
   }
-  
-  @GetMapping(path = "/")
-  public Iterable<Admin> getAdmin() {
-    return adminRepo.findAll();
-  }
 }
