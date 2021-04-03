@@ -2,6 +2,7 @@ package me.rootatkali.justify;
 
 import me.rootatkali.justify.model.Role;
 import me.rootatkali.justify.model.User;
+import me.rootatkali.justify.repo.AdminRepository;
 import me.rootatkali.justify.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ import java.util.UUID;
 public class ContentController {
   @Autowired
   private UserRepository users;
+  
+  @Autowired
+  private AdminRepository admin;
   
   // see ApiController.java
   private void validateUser(String mashovId, UUID token, Role role) {
@@ -60,6 +64,18 @@ public class ContentController {
       throw e;
     }
     return "teacher";
+  }
+  
+  @GetMapping(path = "/admin/requests")
+  public String getAdminRequests(@CookieValue(name = "admin") UUID token) {
+    if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    return "admin_requests";
+  }
+  
+  @GetMapping(path = "/admin/users")
+  public String getAdminUsers(@CookieValue(name = "admin") UUID token) {
+    if (!admin.existsById(token)) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    return "admin_users";
   }
   
   @GetMapping(path = "/privacy")
