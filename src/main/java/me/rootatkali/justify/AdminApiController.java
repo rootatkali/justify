@@ -26,27 +26,28 @@ public class AdminApiController {
       () -> new ResponseStatusException(HttpStatus.NOT_FOUND);
   
   private void verify(String token) {
+    if (token == null) throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     adminRepo.findById(token).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.FORBIDDEN)
     );
   }
   
   @GetMapping(path = "/requests")
-  public Iterable<Request> getRequests(@CookieValue(name = "admin") String token) {
+  public Iterable<Request> getRequests(@CookieValue(name = "admin", required = false) String token) {
     verify(token);
     
     return requestRepo.findAll();
   }
   
   @GetMapping(path = "/requests/{id}")
-  public Request getRequest(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public Request getRequest(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     return requestRepo.findById(id).orElseThrow(NOT_FOUND);
   }
   
   @GetMapping(path = "/users/{id}/count")
-  public Integer getUserRequestCount(@CookieValue(name = "admin") String token, @PathVariable String id) {
+  public Integer getUserRequestCount(@CookieValue(name = "admin", required = false) String token, @PathVariable String id) {
     verify(token);
     userRepo.findById(id).orElseThrow(NOT_FOUND);
   
@@ -56,14 +57,14 @@ public class AdminApiController {
   }
   
   @GetMapping(path = "/users")
-  public Iterable<User> getUsers(@CookieValue(name = "admin") String token) {
+  public Iterable<User> getUsers(@CookieValue(name = "admin", required = false) String token) {
     verify(token);
     
     return userRepo.findAll();
   }
   
   @GetMapping(path = "/users/{id}")
-  public User getUser(@CookieValue(name = "admin") String token, @PathVariable String id) {
+  public User getUser(@CookieValue(name = "admin", required = false) String token, @PathVariable String id) {
     verify(token);
     
     return userRepo.findById(id).orElseThrow(NOT_FOUND);
@@ -76,7 +77,7 @@ public class AdminApiController {
   }
   
   @PostMapping(path = "/requests/{id}/approve")
-  public Request setApproved(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public Request setApproved(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     return setStatus(id, RequestStatus.APPROVED);
@@ -84,35 +85,35 @@ public class AdminApiController {
   
   
   @PostMapping(path = "/requests/{id}/reject")
-  public Request setRejected(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public Request setRejected(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     return setStatus(id, RequestStatus.REJECTED);
   }
   
   @PostMapping(path = "/requests/{id}/cancel")
-  public Request setCancelled(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public Request setCancelled(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     return setStatus(id, RequestStatus.CANCELLED);
   }
   
   @PostMapping(path = "/requests/{id}/reset")
-  public Request setUnanswered(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public Request setUnanswered(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     return setStatus(id, RequestStatus.UNANSWERED);
   }
   
   @DeleteMapping(path = "/requests/{id}")
-  public void deleteRequest(@CookieValue(name = "admin") String token, @PathVariable Integer id) {
+  public void deleteRequest(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id) {
     verify(token);
     
     requestRepo.deleteById(id);
   }
   
   @PutMapping(path = "/requests/{id}")
-  public Request editRequest(@CookieValue(name = "admin") String token, @PathVariable Integer id, @RequestBody RequestTemplate template) {
+  public Request editRequest(@CookieValue(name = "admin", required = false) String token, @PathVariable Integer id, @RequestBody RequestTemplate template) {
     verify(token);
     
     Request r = requestRepo.findById(id).orElseThrow(NOT_FOUND);
@@ -129,7 +130,7 @@ public class AdminApiController {
   }
   
   @PostMapping(path = "/users/{id}/name")
-  public User setUserName(@CookieValue(name = "admin") String token,
+  public User setUserName(@CookieValue(name = "admin", required = false) String token,
                           @PathVariable String id,
                           @RequestParam String first,
                           @RequestParam String last) {
