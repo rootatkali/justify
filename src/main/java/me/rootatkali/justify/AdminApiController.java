@@ -143,7 +143,7 @@ public class AdminApiController {
     return userRepo.save(u);
   }
   
-  @PostMapping(path = "/shutdown")
+  @GetMapping(path = "/shutdown")
   public void shutdown(@CookieValue(name = "admin", required = false) String token) {
     verify(token);
   
