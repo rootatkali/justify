@@ -5,6 +5,7 @@ import me.rootatkali.justify.repo.AdminRepository;
 import me.rootatkali.justify.repo.RequestRepository;
 import me.rootatkali.justify.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -140,5 +141,12 @@ public class AdminApiController {
     u.setFirstName(Xss.deXss(first));
     u.setLastName(Xss.deXss(last));
     return userRepo.save(u);
+  }
+  
+  @GetMapping(path = "/shutdown")
+  public void shutdown(@CookieValue(name = "admin", required = false) String token) {
+    verify(token);
+  
+    System.exit(0);
   }
 }
