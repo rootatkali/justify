@@ -41,7 +41,7 @@ public class JustifyApplication {
     
     API api = API.getInstance();
     if (api.getSchool() == null || api.getSchool().getId() != 580019) api.fetchSchool(580019);
-    api.login(2021, "rotemoses", "mashov2020");
+    api.login(2021, "rotemoses", "mashov2021");
     
     for (Achva a : api.getAchvas()) {
       // add event codes to sql
