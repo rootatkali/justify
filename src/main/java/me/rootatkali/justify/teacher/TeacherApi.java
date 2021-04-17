@@ -67,13 +67,16 @@ public class TeacherApi {
         .method("POST", body)
         .addHeader("User-Agent", USER_AGENT)
         .addHeader("Content-Type", "application/json");
-    if (uniquId != null) {
+    if (uniquId != null && !uniquId.equals("")) {
       builder.addHeader("Cookie", "uniquId=" + uniquId);
     }
     Request req = builder.build();
     
     Response res = http.newCall(req).execute();
-    if (!res.isSuccessful()) throw new ResponseStatusException(HttpStatus.valueOf(res.code()));
+    if (!res.isSuccessful()) {
+      System.err.println(res.body().string());
+      throw new ResponseStatusException(HttpStatus.valueOf(res.code()));
+    }
     
     HashMap<String, String> cookies = new HashMap<>();
     
@@ -88,6 +91,8 @@ public class TeacherApi {
     }
     
     String rb = res.body().string();
+
+    System.err.println("SUCCESS\n\n" + rb);
     
     User u = new User();
     u.setMashovId(String.valueOf((Integer) JsonPath.read(rb, "$.credential.idNumber")));
