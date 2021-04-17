@@ -187,7 +187,7 @@ public class ApiController {
     validateUser(mashovId, token, null);
     User u = userRepository.findById(mashovId).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
     if (u.getRole() == Role.TEACHER && csrf != null && !csrf.equals("null") && !csrf.isBlank()) {
-      if (TeacherApi.getInstance().logout(csrf, CookieUtil.convert(cookies)) != 200)
+      if (TeacherApi.getInstance().logout(csrf, CookieUtil.convert(cookies, "~")) != 200)
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
     u.clearToken();
@@ -338,7 +338,7 @@ public class ApiController {
         LocalDateTime.now().toString(),
         Integer.parseInt(r.getMashovId())
     );
-    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies));
+    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies, "~"));
     return requestRepository.save(r);
   }
   
@@ -369,7 +369,7 @@ public class ApiController {
         LocalDateTime.now().toString(),
         Integer.parseInt(r.getMashovId())
     );
-    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies));
+    TeacherApi.getInstance().requestApproval(apr, csrf, CookieUtil.convert(cookies, "~"));
     return requestRepository.save(r);
   }
   

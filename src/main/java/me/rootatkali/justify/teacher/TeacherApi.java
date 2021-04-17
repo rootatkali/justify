@@ -102,11 +102,11 @@ public class TeacherApi {
     u.setLastName(names[0]);
     u.setRole(Role.TEACHER);
     String uniqRet = cookies.getOrDefault("uniquId", null);
-    return new UserResponse(u, CookieUtil.convert(cookies), csrfToken, uniqRet);
+    return new UserResponse(u, CookieUtil.convert(cookies, "~"), csrfToken, uniqRet);
   }
   
   private String cookieHeader(HashMap<String, String> cookies) {
-    return CookieUtil.convert(cookies);
+    return CookieUtil.convert(cookies, ";");
   }
   
   public ApprovalResponse requestApproval(Approval apr, String csrf, HashMap<String, String> cookies) throws IOException {

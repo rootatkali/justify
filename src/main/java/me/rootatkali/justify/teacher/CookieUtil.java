@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CookieUtil {
-  public static String convert(HashMap<String, String> cookies) {
+  public static String convert(HashMap<String, String> cookies, String delimiter) {
     StringBuilder sb = new StringBuilder();
   
     for (Map.Entry<String, String> e : cookies.entrySet()) { // Loop for cookies from login
       sb.append(
-          String.format("%s=%s; ", e.getKey(), e.getValue())
+          String.format("%s=%s%s ", e.getKey(), e.getValue(), delimiter)
       );
     }
     String result = sb.toString().trim();
@@ -20,10 +20,10 @@ public class CookieUtil {
     return result;
   }
   
-  public static HashMap<String, String> convert(String cookie) {
+  public static HashMap<String, String> convert(String cookie, String delimiter) {
     HashMap<String, String> result = new HashMap<>();
     
-    String[] cookies = cookie.split("; ");
+    String[] cookies = cookie.split(delimiter + " ");
     for (String c : cookies) {
       String[] kv = c.split("=", 2);
       result.put(kv[0], kv[1]);
