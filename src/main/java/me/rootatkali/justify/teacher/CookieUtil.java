@@ -9,7 +9,7 @@ public class CookieUtil {
   
     for (Map.Entry<String, String> e : cookies.entrySet()) { // Loop for cookies from login
       sb.append(
-          String.format("%s=%s%s ", e.getKey(), e.getValue(), delimiter)
+          String.format("%s=%s%s", e.getKey(), e.getValue(), delimiter)
       );
     }
     String result = sb.toString().trim();
@@ -23,7 +23,7 @@ public class CookieUtil {
   public static HashMap<String, String> convert(String cookie, String delimiter) {
     HashMap<String, String> result = new HashMap<>();
     
-    String[] cookies = cookie.split(delimiter + " ");
+    String[] cookies = cookie.split(delimiter);
     for (String c : cookies) {
       String[] kv = c.split("=", 2);
       result.put(kv[0], kv[1]);
