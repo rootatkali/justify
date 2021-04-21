@@ -120,9 +120,12 @@ public class TeacherApi {
         .addHeader("Cookie", cookieHeader(cookies))
         .build();
     Response res = http.newCall(req).execute();
-    
+  
+    String rb = res.body().string();
     if (!res.isSuccessful()) throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-    return gson.fromJson(res.body().string(), ApprovalResponse.class);
+    System.err.println(res.code());
+    System.err.println(rb);
+    return gson.fromJson(rb, ApprovalResponse.class);
   }
   
   public int logout(String csrf, HashMap<String, String> cookies) throws IOException {
