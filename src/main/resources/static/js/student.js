@@ -154,7 +154,12 @@ editModal.addEventListener('show.bs.modal', event => {
     document.getElementById('edit-period-end').value = data.periodEnd;
     document.getElementById('edit-event').value = data.eventCode;
     document.getElementById('edit-approval').value = data.justificationCode;
-    document.getElementById('edit-note').value = data.note;
+    document.getElementById('edit-note').value = data.note
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#x27;', "'");
     document.getElementById('edit-sendRequest').onclick = () => {
       $.ajax(`/api/requests/${id}`, {
         method: 'PUT',
@@ -168,11 +173,6 @@ editModal.addEventListener('show.bs.modal', event => {
           eventCode: parseInt($('#edit-event').val()),
           justificationCode: parseInt($('#edit-approval').val()),
           note: $('#edit-note').val()
-            .replaceAll('&amp;', '&')
-            .replaceAll('&lt;', '<')
-            .replaceAll('&gt;', '>')
-            .replaceAll('&quot;', '"')
-            .replaceAll('&#x27;', "'")
         }),
         success: successData => {
           location.reload();
