@@ -168,6 +168,11 @@ editModal.addEventListener('show.bs.modal', event => {
           eventCode: parseInt($('#edit-event').val()),
           justificationCode: parseInt($('#edit-approval').val()),
           note: $('#edit-note').val()
+            .replaceAll('&amp;', '&')
+            .replaceAll('&lt;', '<')
+            .replaceAll('&gt;', '>')
+            .replaceAll('&quot;', '"')
+            .replaceAll('&#x27;', "'")
         }),
         success: successData => {
           location.reload();
